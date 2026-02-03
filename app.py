@@ -1,5 +1,9 @@
 import streamlit as st
 import requests
+import os
+
+# Get API URL from environment variable, default to localhost for development
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 st.set_page_config(page_title="Customer Churn Predictor")
 
@@ -53,10 +57,17 @@ if st.button("Predict Churn"):
         "TotalCharges": TotalCharges
     }
 
-    response = requests.post(
-        "http://127.0.0.1:8000/predict",
-        json=payload
-    )
+    try:
+        response = requests.post(
+            f"{API_URL}/predict",
+            json=payload,
+            timeout=10
+        )
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error connecting to API: {str(e)}")
+        st.info(f"API URL: {API_URL}")
+        return
 
     result = response.json()
 
