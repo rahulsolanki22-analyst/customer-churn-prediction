@@ -67,7 +67,7 @@ if st.button("Predict Churn"):
     except requests.exceptions.RequestException as e:
         st.error(f"Error connecting to API: {str(e)}")
         st.info(f"API URL: {API_URL}")
-        return
+        st.stop()
 
     result = response.json()
 
